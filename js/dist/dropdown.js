@@ -285,7 +285,7 @@ var Dropdown = function () {
         return;
       }
 
-      var toggles = $.makeArray($(Selector.DATA_TOGGLE));
+      var toggles = $.makeArray($(Selector.DATA_TOGGLE + "[aria-expanded]"));
 
       for (var i = 0; i < toggles.length; i++) {
         var parent = Dropdown._getParentFromElement(toggles[i]);

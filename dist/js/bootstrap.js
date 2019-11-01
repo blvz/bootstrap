@@ -1,6 +1,6 @@
 /*!
   * Bootstrap v4.0.0-beta.2 (https://getbootstrap.com)
-  * Copyright 2011-2017 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
+  * Copyright 2011-2019 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
   */
 var bootstrap = (function (exports,$,Popper) {
@@ -1664,7 +1664,7 @@ var Dropdown = function () {
         return;
       }
 
-      var toggles = $.makeArray($(Selector.DATA_TOGGLE));
+      var toggles = $.makeArray($(Selector.DATA_TOGGLE + "[aria-expanded]"));
 
       for (var i = 0; i < toggles.length; i++) {
         var parent = Dropdown._getParentFromElement(toggles[i]);
@@ -2597,7 +2597,9 @@ var Tooltip = function () {
       var showEvent = $.Event(this.constructor.Event.SHOW);
 
       if (this.isWithContent() && this._isEnabled) {
-        $(this.element).trigger(showEvent);
+        $(this.element).trigger(showEvent).closest('.modal').on('hide.bs.modal', function () {
+          return _this.hide();
+        });
         var isInTheDom = $.contains(this.element.ownerDocument.documentElement, this.element);
 
         if (showEvent.isDefaultPrevented() || !isInTheDom) {
@@ -2683,11 +2685,11 @@ var Tooltip = function () {
     _proto.hide = function hide(callback) {
       var _this2 = this;
 
-      var tip = this.getTipElement();
+      var tip = this.tip;
       var hideEvent = $.Event(this.constructor.Event.HIDE);
 
       var complete = function complete() {
-        if (_this2._hoverState !== HoverState.SHOW && tip.parentNode) {
+        if (_this2._hoverState !== HoverState.SHOW && tip && tip.parentNode) {
           tip.parentNode.removeChild(tip);
         }
 
@@ -2712,8 +2714,11 @@ var Tooltip = function () {
         return;
       }
 
-      $(tip).removeClass(ClassName.SHOW); // if this is a touch-enabled device we remove the extra
+      if (tip) {
+        $(tip).removeClass(ClassName.SHOW);
+      } // if this is a touch-enabled device we remove the extra
       // empty mouseover listeners we added for iOS support
+
 
       if ('ontouchstart' in document.documentElement) {
         $('body').children().off('mouseover', null, $.noop);
@@ -2723,13 +2728,14 @@ var Tooltip = function () {
       this._activeTrigger[Trigger.FOCUS] = false;
       this._activeTrigger[Trigger.HOVER] = false;
 
-      if (Util.supportsTransitionEnd() && $(this.tip).hasClass(ClassName.FADE)) {
+      if (tip && Util.supportsTransitionEnd() && $(this.tip).hasClass(ClassName.FADE)) {
         $(tip).one(Util.TRANSITION_END, complete).emulateTransitionEnd(TRANSITION_DURATION);
       } else {
         complete();
       }
 
       this._hoverState = '';
+      $(this.element).closest('.modal').off('hide.bs.modal');
     };
 
     _proto.update = function update() {
@@ -2808,10 +2814,6 @@ var Tooltip = function () {
             return _this3._leave(event);
           });
         }
-
-        $(_this3.element).closest('.modal').on('hide.bs.modal', function () {
-          return _this3.hide();
-        });
       });
 
       if (this.config.selector) {
@@ -2945,6 +2947,10 @@ var Tooltip = function () {
     };
 
     _proto._cleanTipClass = function _cleanTipClass() {
+      if (!this.tip) {
+        return;
+      }
+
       var $tip = $(this.getTipElement());
       var tabClass = $tip.attr('class').match(BSCLS_PREFIX_REGEX);
 
@@ -3151,6 +3157,10 @@ var Popover = function () {
     };
 
     _proto._cleanTipClass = function _cleanTipClass() {
+      if (!this.tip) {
+        return;
+      }
+
       var $tip = $(this.getTipElement());
       var tabClass = $tip.attr('class').match(BSCLS_PREFIX_REGEX);
 

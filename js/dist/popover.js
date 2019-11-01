@@ -98,6 +98,10 @@ var Popover = function () {
     };
 
     _proto._cleanTipClass = function _cleanTipClass() {
+      if (!this.tip) {
+        return;
+      }
+
       var $tip = $(this.getTipElement());
       var tabClass = $tip.attr('class').match(BSCLS_PREFIX_REGEX);
 
