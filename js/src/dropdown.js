@@ -301,7 +301,7 @@ const Dropdown = (() => {
         return
       }
 
-      const toggles = $.makeArray($(Selector.DATA_TOGGLE))
+      const toggles = $.makeArray($(`${Selector.DATA_TOGGLE}[aria-expanded]`))
       for (let i = 0; i < toggles.length; i++) {
         const parent        = Dropdown._getParentFromElement(toggles[i])
         const context       = $(toggles[i]).data(DATA_KEY)
