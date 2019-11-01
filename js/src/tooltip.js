@@ -252,7 +252,10 @@ const Tooltip = (() => {
 
       const showEvent = $.Event(this.constructor.Event.SHOW)
       if (this.isWithContent() && this._isEnabled) {
-        $(this.element).trigger(showEvent)
+        $(this.element)
+          .trigger(showEvent)
+          .closest('.modal')
+          .on('hide.bs.modal', () => this.hide())
 
         const isInTheDom = $.contains(
           this.element.ownerDocument.documentElement,
@@ -401,7 +404,7 @@ const Tooltip = (() => {
       }
 
       this._hoverState = ''
-
+      $(this.element).closest('.modal').off('hide.bs.modal')
     }
 
     update() {
@@ -497,11 +500,6 @@ const Tooltip = (() => {
               (event) => this._leave(event)
             )
         }
-
-        $(this.element).closest('.modal').on(
-          'hide.bs.modal',
-          () => this.hide()
-        )
       })
 
       if (this.config.selector) {
