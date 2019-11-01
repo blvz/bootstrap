@@ -350,10 +350,10 @@ const Tooltip = (() => {
     }
 
     hide(callback) {
-      const tip       = this.getTipElement()
+      const tip       = this.tip
       const hideEvent = $.Event(this.constructor.Event.HIDE)
       const complete  = () => {
-        if (this._hoverState !== HoverState.SHOW && tip.parentNode) {
+        if (this._hoverState !== HoverState.SHOW && tip && tip.parentNode) {
           tip.parentNode.removeChild(tip)
         }
 
@@ -375,7 +375,9 @@ const Tooltip = (() => {
         return
       }
 
-      $(tip).removeClass(ClassName.SHOW)
+      if (tip) {
+        $(tip).removeClass(ClassName.SHOW)
+      }
 
       // if this is a touch-enabled device we remove the extra
       // empty mouseover listeners we added for iOS support
@@ -387,7 +389,7 @@ const Tooltip = (() => {
       this._activeTrigger[Trigger.FOCUS] = false
       this._activeTrigger[Trigger.HOVER] = false
 
-      if (Util.supportsTransitionEnd() &&
+      if (tip && Util.supportsTransitionEnd() &&
           $(this.tip).hasClass(ClassName.FADE)) {
 
         $(tip)
@@ -661,6 +663,10 @@ const Tooltip = (() => {
     }
 
     _cleanTipClass() {
+      if (!this.tip) {
+        return
+      }
+
       const $tip = $(this.getTipElement())
       const tabClass = $tip.attr('class').match(BSCLS_PREFIX_REGEX)
       if (tabClass !== null && tabClass.length > 0) {

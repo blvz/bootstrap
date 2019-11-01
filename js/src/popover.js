@@ -139,6 +139,10 @@ const Popover = (() => {
     }
 
     _cleanTipClass() {
+      if (!this.tip) {
+        return
+      }
+
       const $tip = $(this.getTipElement())
       const tabClass = $tip.attr('class').match(BSCLS_PREFIX_REGEX)
       if (tabClass !== null && tabClass.length > 0) {
